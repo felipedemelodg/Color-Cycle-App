@@ -1,13 +1,17 @@
 * {
     padding: 0;
     margin: 0;
-   
+
 }
 body{
     align-items: center;
     flex-direction: column;
     display: flex;
     height: 100vh;
+    animation: anima;
+}
+@keyframes anima{
+
 }
 
 #codigo-das-cores,
@@ -23,14 +27,32 @@ body{
 }
 #codigo-das-cores>select{
     width: 100px;
-    
+
 }
 #cores-escolhidas{
+    display: block;
+    flex-wrap: wrap;
     height: 150px;
     margin-top: 1em;
 }
 .cor{
+    float: left;
     width: 20px;
     height: 20px;
-    border: 1px solid red;
+
+    cursor: pointer;
+}
+select{
+    appearance: none;
+    width: 15px;
+    text-align: center;
+}
+select:focus{
+    outline: none;
+}
+.foco{
+    padding: 1em;
+}
+.selecionado{
+    border:2px solid rgb(0, 255, 0)
 }
