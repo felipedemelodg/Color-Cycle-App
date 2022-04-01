@@ -1,140 +1,121 @@
-let options = document.getElementsByClassName('op')
-let r1 = document.getElementById('r-1')
-let r2 = document.getElementById('r-2')
-let g1 = document.getElementById('g-1')
-let g2 = document.getElementById('g-2')
-let b1 = document.getElementById('b-1')
-let b2 = document.getElementById('b-2')
-let coresEscolhidas = document.getElementById('cores-escolhidas')
-let add = document.getElementById('add')
-let fundo = document.querySelector('body')
-let cont = 0
-let array = []
-let listaDeCores = []
-let controlador = document.getElementById('controlador')
-let play = document.getElementById('play')
-let pause = document.getElementById('pause')
-let cores = document.getElementsByClassName('cor')
-let lenCores = cores.length
+let options = document.getElementsByClassName("op");
+let r1 = document.getElementById("r-1");
+let r2 = document.getElementById("r-2");
+let g1 = document.getElementById("g-1");
+let g2 = document.getElementById("g-2");
+let b1 = document.getElementById("b-1");
+let b2 = document.getElementById("b-2");
+let quadro_de_cores = document.getElementById("cores-escolhidas");
+let add = document.getElementById("add");
+let fundo = document.querySelector("body");
+let cont = 0;
+let array = [];
+let listaDeCores = [];
+let controlador = document.getElementById("controlador");
+let play = document.getElementById("play");
+let pause = document.getElementById("pause");
+let cores = document.getElementsByClassName("cor");
+let lenCores = cores.length;
 
+function criarDivNoQuadroDeCores() {
+    const cor = document.createElement("div");
+    cor.classList.add("cor");
+    quadro_de_cores.appendChild(cor);
+    darCorADivNoQuadroDeCores(cor)
+    retornaOsFilhosDoQuadroDeCores(quadro_de_cores)
 
+}
 
+function pegaOsValoresDosOptions() {
+    const values = [];
+    Object.values(options).forEach((el) => {
+        values.push(el.value);
+    });
+    return values
+}
 function hexadecimal() {
-    let red = `${r1.value}${r2.value}`
-    let green = `${g1.value}${g2.value}`
-    let blue = `${b1.value}${b2.value}`
-    let hexadecimal = `#${red}${green}${blue}`
-    return hexadecimal
+    return "#" + pegaOsValoresDosOptions().join().replace(/,/g, '');
+}
+function darCorADivNoQuadroDeCores(el) {
+    el.classList.add(hexadecimal())
+    el.style.backgroundColor = hexadecimal()
 }
 
-
-function pegarCores() {
-    let cor = document.createElement('div')
-    cor.classList.add('cor', hexadecimal())
-    cor.style.backgroundColor = hexadecimal()
-    coresEscolhidas.appendChild(
-        cor
-    )
-    retonarCores()
+function objetoDaAnimacao() {
+    return { backgroundColor: hexadecimal() }
 }
-
-function objetoDaTransicao() {
-    return {
-        backgroundColor: hexadecimal()
-    }
-}
-
-function arrayDaTransicao() {
-    array[cont] = objetoDaTransicao()
-    cont++
+function keyframes() {
+    const array = []
+    Object.values(quadro_de_cores.children).forEach(el => {
+        array.push({ backgroundColor: el.style.backgroundColor })
+    })
     return array
 }
-
-function animacao(el, transicao, tempo, int = Infinity) {
-    el.animate(transicao, {
-        duration: tempo,
-        iterations: int
+function animacao(el, keyframes) {
+    el.animate(keyframes, {
+        duration: parseInt(controlador.value) * 2500,
+        iterations: Infinity
     })
 }
+function rodeAnimacao() {
+    animacao(fundo, keyframes())
+}
 
-function parar() {
+function mudarVelocidadeDaAnimação() {
+    const tempo = parseInt(controlador.value) / 5
+    document.getAnimations().forEach(el => {
+        el.playbackRate = tempo
+    })
+}
+function pausarAnimacao() {
     document.getAnimations().forEach(el => {
         el.playbackRate = 0
     })
 }
 
-function velocidade() {
-    let velocidade = parseInt(controlador.value * 1000)
-    return velocidade
+function retornarElementoDoQuadroDeCores(e) {
+    adicionarSelecao(e.target)
 }
-
-
-function comecarAnimacao() {
-    if (coresEscolhidas.children.length > 1) {
-        animacao(fundo, arrayDaTransicao(), velocidade())
-    }
-    if (play.classList.contains('foco')) {
-        play.classList.remove('foco')
-    }
-}
-
-function focoNoElemento() {
-    play.classList.add('foco')
-}
-
-function codigoDasCores(e) {
-    let hexadecimal = (e.target.classList[1])
-    colocaCodigoDasCoresNosInputs(hexadecimal)
-}
-
-function colocaCodigoDasCoresNosInputs(el) {
-    r1.value = [el[1]]
-    r2.value = [el[2]]
-    g1.value = [el[3]]
-    g2.value = [el[4]]
-    b1.value = [el[5]]
-    b2.value = [el[6]]
-
-}
-
-function selecionarElemento(e) {
-    e.target.classList.add('selecionado')
-    let selecionado = document.getElementsByClassName('selecionado')
-    if (selecionado.length > 1) {
-        Object.values(selecionado).forEach(el => {
-            el.classList.remove('selecionado')
-            e.target.classList.add('selecionado')
-        })
-    }
-}
-
-function retonarCores() {
-    Object.values(cores).forEach(el => {
-        el.addEventListener('click', codigoDasCores, false)
-        el.addEventListener('click', selecionarElemento, false)
+function adicionarSelecao(el) {
+    el.classList.add('selecionado')
+    const selecionado = document.getElementsByClassName('selecionado')
+    Object.values(selecionado).forEach(selecao => {
+        if (selecao.classList.contains('selecionado')) {
+            selecao.classList.remove('selecionado')
+            el.classList.add('selecionado')
+            backgroundColorDoSelecionado()
+        }
     })
 }
 
-function colocarValoresDosOptionsNasCores() {
-    let selecionado = document.querySelector('.selecionado')
-    let red = `${r1.value}${r2.value}`
-    let green = `${g1.value}${g2.value}`
-    let blue = `${b1.value}${b2.value}`
-    let hexadecimal = `#${red}${green}${blue}`
-    selecionado.style.backgroundColor = hexadecimal
-    // console.log(selecionado)
+function backgroundColorDoSelecionado() {
+    const selecionado = document.querySelector('.selecionado').classList[1]
+    alteraValorDosOptions(selecionado)
 }
 
-Object.values(options).forEach(op => {
-    op.addEventListener('input', colocarValoresDosOptionsNasCores, false)
+function alteraValorDosOptions(el) {
+    let valor = el.replace('#', "")
+    let select = Object.values(options)
 
+    for (let i = 0; i < valor.length; i++) {
+        select[i].value = valor[i]
+    }
+}
+function mudarCorDoSelecionado(){
+    const seleconado = document.querySelector('.selecionado')
+    seleconado.style.backgroundColor = hexadecimal()
+}
+
+Object.values(options).forEach(el => {
+    el.addEventListener('input', mudarCorDoSelecionado)
 })
 
-
-add.addEventListener('click', pegarCores, false)
-add.addEventListener('click', objetoDaTransicao, false)
-add.addEventListener('click', arrayDaTransicao, false)
-pause.addEventListener('click', parar, false)
-play.addEventListener('click', comecarAnimacao, false)
-controlador.addEventListener('input', velocidade, false)
-controlador.addEventListener('input', focoNoElemento, false)
+function retornaOsFilhosDoQuadroDeCores(filho) {
+    Object.values(filho.children).forEach(el => {
+        el.addEventListener('click', retornarElementoDoQuadroDeCores, false)
+    })
+}
+controlador.addEventListener('input', mudarVelocidadeDaAnimação)
+play.addEventListener('click', rodeAnimacao, false)
+pause.addEventListener('click', pausarAnimacao, false)
+add.addEventListener("click", criarDivNoQuadroDeCores, false);

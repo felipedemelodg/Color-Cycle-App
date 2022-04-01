@@ -10,9 +10,7 @@ body{
     height: 100vh;
     animation: anima;
 }
-@keyframes anima{
 
-}
 
 #codigo-das-cores,
 #cores-escolhidas{
